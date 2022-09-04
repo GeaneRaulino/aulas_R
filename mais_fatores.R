@@ -2,7 +2,7 @@ library(ade4)
 library(arules)
 library(forcats)
 
-#base disponibilizada no git do professor
+#base disponibilizada no git do professor e salva no computador
 facebook <- read.table("bases_originais/facebook_2021.csv", sep=";", header = T)
 str(facebook)
 
