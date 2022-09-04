@@ -5,7 +5,7 @@ facebook <- read.table("https://raw.githubusercontent.com/GeaneRaulino/aulas_R/m
 #sumários
 count(facebook, status_type) 
 
-# sumários com agrupamentos
+#sumários com agrupamentos
 facebook %>% group_by(status_type) %>% summarise(avg = mean(num_reactions))
 
 
