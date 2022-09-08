@@ -1,0 +1,21 @@
+library(data.table)
+library(dplyr)
+library(tidyverse)
+library(funModeling) 
+
+general_data <- fread("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+latin_america_countries <-c("Argentina", "Brazil", "Bolivia", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominican Republic", "Ecuador", "El Salvador", "Guatemala", "Haiti", "Honduras", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Uruguay", "Venezuela")
+
+latin_america <- general_data %>% filter(location %in% latin_america_countries)
+
+latin_america <- latin_america %>% select(location, new_cases, new_deaths)
+
+
+latin_america %>% filter(new_cases < 0) #18.405 linhas
+
+latin_america <- latin_america %>% filter(new_cases>=0) #18.223 linhas
+
+#filtrando mesmo dataframe removendo NA de new_cases e new_deaths
+latin_america <- latin_america %>% filter(new_cases !='NA') #18.223 linhas, quer dizer que já não exisita new_cases = NA
+latin_america <- latin_america %>% filter(new_deaths !='NA') #17.949 linhas
