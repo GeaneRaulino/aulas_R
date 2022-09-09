@@ -1,0 +1,14 @@
+install.packages('rjson')
+install.packages('readxl')
+library(readxl)
+library(rjson)
+
+# arquivos de texto com read.csv2
+dadosDespesas <- read.csv2('http://dados.recife.pe.gov.br/dataset/4e008cec-c6a8-40cf-8fc7-d1530168b816/resource/a4b97fb4-7dc6-4e70-a87d-3c3503f00b1e/download/recife-dados-despesas-2022.csv', sep = ';', encoding = 'UTF-8')
+
+# arquivos de excel
+latinAmerica <- read_excel('bases_originais/latin_america.xlsx', sheet=1) 
+
+# arquivos json Dicionário de Dados SEDEC Chamados
+dicionarioSEDEC <- fromJSON(file= "http://dados.recife.pe.gov.br/dataset/99eea78a-1bd9-4b87-95b8-7e7bae8f64d4/resource/ee1d0a4f-3ad2-4d77-a2b4-d50a7893693f/download/sedec-chamados.json" )
+
