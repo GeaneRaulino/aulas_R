@@ -16,8 +16,6 @@ latin_america <- general_data %>% filter(location %in% latin_america_countries)
 
 latin_america <- latin_america %>% select(location, new_cases, new_deaths)
 
-latin_america %>% filter(new_cases < 0) #18.405 linhas
-
 latin_america <- latin_america %>% filter(new_cases>=0) #18.223 linhas
 
 #filtrando mesmo dataframe removendo NA de new_cases e new_deaths
