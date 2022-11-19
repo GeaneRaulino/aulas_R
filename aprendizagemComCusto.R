@@ -39,10 +39,12 @@ wine_RF_CLASS
 wine_C5_CLASS <- train(Alcohol ~ Tipo1 + Tipo2 + Tipo3 + Color + Dilution + Alcalinity + Flavanoids, data = treinoWine, method = "C5.0Cost", trControl = train.control)
 wine_C5_CLASS
 
-predicaoWINE_RF_CLASS = predict(wine_RF_CLASS, testeWineB) # criar predição
+#Predição RF Class
+predicaoWINE_RF_CLASS = predict(wine_RF_CLASS, testeWineB) 
 cmWINE_RF_CLASS <- confusionMatrix(predicaoWINE_RF_CLASS, testeWineB$AlcoholDisc)
 cmWINE_RF_CLASS
 
-predicaoWINE_C5_CLASS = predict(wine_C5_CLASS, testeWineB) # criar predição
+#Predição C5 Class
+predicaoWINE_C5_CLASS = predict(wine_C5_CLASS, testeWineB)
 cmWINE_C5_CLASS <- confusionMatrix(predicaoWINE_C5_CLASS, testeWineB$AlcoholDisc)
 cmWINE_C5_CLASS
