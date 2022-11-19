@@ -1,48 +1,49 @@
 
 pacman::p_load(ade4, car, caret, corrplot, data.table, dplyr, forcats, funModeling, ggplot2, mlbench, mltools, randomForest, rattle, tidyverse, mboost)
 
-#Base utilizada, será base USRegionalMortality disponível
+#Base utilizada, será base Wine disponível no pacote Rattle
 
-USRegionalMortality_Base <- USRegionalMortality
+wineBase <- rattle::wine
 
-USRegionalMortality_D <- acm.disjonctif(as.data.frame(USRegionalMortality_Base$Region))
-names(USRegionalMortality_D) <- c('Region01', 'Region02', 'Region03', 'Region04', 'Region05', 'Region06', 'Region07', 'Region08', 'Region09', 'Region10')
 
-USRegionalMortality_Base <- cbind(USRegionalMortality_Base, USRegionalMortality_D)
+wineD <- acm.disjonctif(as.data.frame(wineBase$Type))
+names(wineD) <- c('Tipo1','Tipo2','Tipo3')
+
+
+wineBase <- cbind(wineBase,wineD)
 
 #discretização
-USRegionalMortality_Base$Rate <- discretize(USRegionalMortality_Base$Rate, method = "frequency", breaks = 2, labels = c("baixa", "alta"))
+wineBase$Alcohol <- discretize(wineBase$Alcohol, method = "frequency", breaks = 2, labels = c("baixo", "alto"))
 
 #Treino e teste
-particaoMortality = createDataPartition(USRegionalMortality_Base$Rate, p=.7, list = F)
-treinoMortality = USRegionalMortality_Base[particaoMortality,]
-testeMortality = USRegionalMortality_Base[-particaoMortality,]
+
+particaoWine = createDataPartition(wineBase$Alcohol, p=.7, list = F) # cria a partição 70-30
+treinoWine  = wineBase[particaoWine, ] # treino
+testeWine  = wineBase[-particaoWine, ] # - treino = teste
 
 #controle de treinamento
 train.control <- trainControl(method = "cv", number = 40, verboseIter = T)
 
 
 #Máquina de vetor de Suporte (SVM)
-mortality_SVM_CLASS <- train(Rate ~ Region01 + Region02 + Region03 + Region04 + Region05 + Region06 + Region07 + Region08 + Region09 + Region10, data = treinoMortality, method = "svmLinear", trControl = train.control)
-mortality_SVM_CLASS
-plot(varImp(mortality_SVM_CLASS))
+
+wine_SVM_CLASS <- train(Alcohol ~ Tipo1 + Tipo2 + Tipo3 + Color + Dilution + Alcalinity + Flavanoids, data = treinoWine, method = "svmLinear", trControl = train.control)
+wine_SVM_CLASS
+plot(varImp(wine_SVM_CLASS))
+
+#cria matriz de confusão e predição
 
 
-#cria predição
-predicaoRF_Mortality = predict(mortality_SVM_CLASS,testeMortality$Rate)
+predicaoWineRF <- predict(wine_SVM_CLASS, testeWine) # criar predição
+cmWineRF <- confusionMatrix(predicaoWineRF, testeWine$Alcohol)
+cmWineRF
+cmWineRF$table
 
+gtBaixa <- cmWineRF$table[1]+cmWineRF$table[2]
+gtAlta <- cmWineRF$table[3]+cmWineRF$table[4]
 
-#cria matriz de confusão
-cmRF2 <- confusionMatrix(predicaoRF_Mortality, testeMortality$Rate) 
-cmRF2 #baixa acuracia e baixo kappa, modelo ainda não ideal
-cmRF2$table
-
-
-gtBaixa <- cmRF2$table[1]+cmRF2$table[2]
-gtAlta <- cmRF2$table[3]+cmRF2$table[4]
-
-pdBaixa <- cmRF2$table[1]+cmRF2$table[3]
-pdAlta <- cmRF2$table[2]+cmRF2$table[4]
+pdBaixa <- cmWineRF$table[1]+cmWineRF$table[3]
+pdAlta <- cmWineRF$table[2]+cmWineRF$table[4]
 
 gtTotal <- gtAlta + gtBaixa
 estAcc <- (gtBaixa*pdBaixa/gtTotal^2)+(gtAlta*pdAlta/gtTotal^2)
