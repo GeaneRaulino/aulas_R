@@ -1,0 +1,46 @@
+---
+title: "Relatorio"
+output: html_document
+date: "2022-11-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#Carregar bibliotecas
+pacman::p_load(cluster, dplyr, factoextra, ggplot2, plotly)
+
+library(carData)
+Arrests
+
+#Pré-processamento
+Arrests_cluster <- Arrests[ , -5]
+Arrests_cluster <- Arrests_cluster[ , -1]
+Arrests_cluster <- Arrests_cluster[ , -1]
+Arrests_cluster <- Arrests_cluster[ , -3]
+Arrests_cluster <- Arrests_cluster[ , -3]
+str(Arrests_cluster)
+
+#Definir semente aleatória
+set.seed(1)
+
+
+fviz_nbclust(Arrests_cluster, kmeans, method = "wss")
+
+#Agrupamento com kmeans
+cls <- kmeans(x = Arrests_cluster, centers = 3) # aprendizagem ns
+Arrests_cluster$cluster <- as.factor(cls$cluster) # passamos os clusters para a base original
+head(Arrests_cluster)
+```
+
+#Agrupamento de dados 'Arrests'
+
+
+```{r Arrests_cluster, echo=FALSE, warning=FALSE, message=FALSE}
+grafico1 <- ggplot() +
+  geom_point(data = Arrests_cluster, mapping = aes(x = age, y = year, colour = cluster)) + 
+  geom_point(mapping = aes_string(x = cls$centers[ , "age"], y = cls$centers[ , "year"]), color = "red", size = 4) +
+  geom_text(mapping = aes_string(x = cls$centers[ , "age"], y = cls$centers[ , "year"], label = 1:3), color = "white", size = 2) +
+  theme_light()
+ggplotly(grafico1)
+```
+
