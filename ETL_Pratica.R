@@ -20,6 +20,10 @@ sinistrosRecife2018Raw <- sinistrosRecife2018Raw %>% select(all_of(colunas_iguai
 sinistrosRecife2020Raw <- sinistrosRecife2020Raw %>% select(all_of(colunas_iguais))
 sinistrosRecife2021Raw <- sinistrosRecife2021Raw %>% select(all_of(colunas_iguais))
 
+sinistrosRecife2020Raw
+sinistrosRecife2021Raw
+sinistrosRecife2018Raw
+
 sinistrosRecifeRaw <- rbind( sinistrosRecife2018Raw, sinistrosRecife2020Raw, sinistrosRecife2021Raw)
 sinistrosRecifeRaw
 #Observa a estrutura dos dados
