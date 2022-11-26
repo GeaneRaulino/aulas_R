@@ -1,38 +1,49 @@
-library(ade4)
-library(arules)
-library(forcats)
+##########
+install.packages("readxl")
+library(microbenchmark)
+library(data.table)
+library(dplyr)
+library(tidyverse)
+library(funModeling) 
+library(writexl)
+library(readxl)
 
-#base disponibilizada no git do professor e salva no computador
-facebook <- read.table("bases_originais/facebook_2021.csv", sep=";", header = T)
-str(facebook)
+pacman::p_load(data.table, dplyr, plotly, EnvStats, forcats, arules, ade4)
 
-# conversão em fatores
+sinistrosRecife2021Raw <- read.csv2('http://dados.recife.pe.gov.br/dataset/44087d2d-73b5-4ab3-9bd8-78da7436eed1/resource/2caa8f41-ccd9-4ea5-906d-f66017d6e107/download/acidentes_2021-jan.csv', sep = ';', encoding = 'UTF-8')
 
-for(i in 2:7) {
-  facebook[,i] <- as.factor(facebook[,i]) } 
+#Conversão em fatores
 
-str(facebook)
+for(k in 2:7) {
+  sinistrosRecife2021Raw[,k] <- as.factor(sinistrosRecife2021Raw[,k]) 
+} 
 
-# filtro por tipo de dado
+str(sinistrosRecife2021Raw)
 
-factorsFacebook <- unlist(lapply(facebook, is.factor))  
-facebookFactor <- facebook[ , factorsFacebook]
-str(facebookFactor)
+#Filtro por tipo de dado
+factorsSinistrosRecife2021Raw <- unlist(lapply(sinistrosRecife2021Raw, is.factor)) 
+factorsSinistrosRecife2021Raw
+sinistroFactor <- sinistrosRecife2021Raw[ factorsSinistrosRecife2021Raw ]
+sinistroFactor
 
-# One Hot Encoding
-facebookDummy <- acm.disjonctif(facebookFactor)
+str(sinistroFactor)
 
-# Discretização
-inteirosFacebook <- unlist(lapply(facebook, is.integer))  
-facebookInteiros <- facebook[, inteirosFacebook]
-str(facebookInteiros)
+#One Hot Encoding
+sinistrosDummy <- acm.disjonctif(sinistroFactor)
 
-#A coluna "num_loves" não é bem distribuida
-facebookInteiros$num_loves.Disc <- discretize(facebookInteiros$num_loves, method = "interval", breaks = 3, labels = c("poucos", 'médio', 'muitos'))
+#Discretização
+inteirosSinistro <- unlist(lapply(sinistrosRecife2021Raw, is.integer))  
+inteirosSinistro <- sinistrosRecife2021Raw[, inteirosSinistro]
+str(inteirosSinistro)
 
-# forcats - usando tidyverse para fatores
-fct_count(facebookFactor$status_type) # conta os fatores
+#Discretização
+inteirosSinistro$vitimas <- discretize(inteirosSinistro$vitimas, method = "interval", breaks = 3, labels = c("poucos", 'médio', 'muitos'))
+inteirosSinistro
+sinistroFactor
 
-fct_anon(facebookFactor$status_type) # anonimiza os fatores
+#Forcats - usando tidyverse para fatores
+fct_count(sinistroFactor$natureza_acidente) # conta os fatores
 
-fct_lump(facebookFactor$status_type, n = 2) # reclassifica os fatores em mais comum e outros photo, video e other
+fct_anon(sinistroFactor$natureza_acidente) # anonimiza os fatores
+
+fct_lump(sinistroFactor$natureza_acidente, n = 2) # reclassifica os fatores em COM VÍTIMA, SEM VÍTIMA e OTHER
